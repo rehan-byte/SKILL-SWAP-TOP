@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SkillSwap — Edit Profile</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script
+      src="https://kit.fontawesome.com/a95fd4cc0b.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0e1628;
+        --card: #1f2a3a;
+        --input: #2b3543;
+        --teal: #1aae9f;
+        --muted: #9ca3af;
+        --text: #e5e7eb;
+      }
+
+      body {
+        font-family: Poppins;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      .sidebar {
+        width: 250px;
+        background: var(--sidebar);
+        padding: 22px;
+        border-right: 1px solid rgba(255, 255, 255, 0.04);
+        position: fixed;
+        height: 100%;
+        margin-right: 1650px;
+      }
+
+      .sidebar h3 {
+        color: var(--teal);
+        margin: 0 0 6px 0;
+      }
+
+      .sidebar p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .nav a {
+        display: block;
+        color: var(--text);
+        padding: 10px;
+        border-radius: 8px;
+        text-decoration: none;
+        margin-top: 12px;
+        transition: 0.2s;
+      }
+
+      .nav a:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .nav a.active {
+        background: rgba(26, 174, 159, 0.12);
+        color: var(--teal);
+        border-left: 4px solid var(--teal);
+        padding-left: 14px;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .wrapper {
+        width: 100%;
+        max-width: 760px;
+        background: var(--card);
+        border-radius: 12px;
+        padding: 22px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      }
+
+      .row {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+
+      h1 {
+        margin: 0 0 6px 0;
+        font-size: 22px;
+      }
+
+      p.sub {
+        color: var(--muted);
+        margin: 0 0 18px 0;
+      }
+
+      .profile-pic-preview {
+        width: 96px;
+        height: 96px;
+        border-radius: 999px;
+        background: #374151;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        cursor: pointer;
+        flex-shrink: 0;
+        /* Added background styles for initial placeholder */
+        background-image: url("https://picsum.photos/96");
+        background-size: cover;
+        border: 3px solid var(--teal); /* Highlight the profile pic */
+      }
+
+      form .form-group {
+        margin-bottom: 12px;
+      }
+
+      label {
+        display: block;
+        color: var(--muted);
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+
+      input[type="text"],
+      input[type="tel"],
+      input[type="email"],
+      textarea,
+      select {
+        width: 100%;
+        padding: 12px;
+        border-radius: 12px;
+        background: var(--input);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        color: var(--text);
+        font-size: 15px;
+      }
+
+      textarea {
+        min-height: 90px;
+        resize: vertical;
+        border-radius: 10px;
+      }
+
+      .save-button {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        background: linear-gradient(180deg, var(--teal), #00a385);
+        color: white;
+        border: 0;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 8px;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .save-button:hover {
+        transition: transform 0.2s, box-shadow 0.2s;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(26, 174, 159, 0.4);
+      }
+
+      .top {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+
+      .small-muted {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .center {
+        display: flex;
+        justify-content: center;
+      }
+
+      @media (max-width: 700px) {
+        .row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .profile-pic-preview {
+          margin: auto;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <aside class="sidebar">
+      <h3>Skill Swap</h3>
+      <p>Trade skills, grow together</p>
+      <nav class="nav" style="margin-top: 18px">
+        <a href="skillmain.html">
+          <i class="fa-regular fa-house" style="margin-right: 8px"></i>Browse
+          Skills</a
+        >
+        <a href="myswaps.html">
+          <i class="fa-solid fa-retweet" style="margin-right: 8px"></i>My
+          Swaps</a
+        >
+        <a href="profile.html" class="active"
+          ><i class="fa-regular fa-user" style="margin-right: 8px"></i>My
+          Profile</a
+        >
+        <a href="rfeedback.html"
+          ><i class="fa-regular fa-envelope" style="margin-right: 8px"></i
+          >Feedback</a
+        >
+      </nav>
+    </aside>
+    <div class="wrapper">
+      <div class="top">
+        <div>
+          <h1>
+            <i class="fa-regular fa-user" style="color: #1aae9f"></i> Edit Your
+            Profile
+          </h1>
+          <p class="sub">
+            What you can teach, and what you want to learn — this will appear in
+            Browse Skills.
+          </p>
+        </div>
+      </div>
+
+      <form id="profileForm">
+        <div class="row" style="margin-bottom: 12px">
+          <label
+            for="profile-pic-input"
+            class="profile-pic-preview"
+            title="Click to choose photo"
+            id="picPreview"
+          >
+          </label>
+          <input
+            id="profile-pic-input"
+            class="hidden"
+            type="file"
+            accept="image/*"
+          />
+
+          <div style="flex: 1">
+            <div class="form-group">
+              <label for="skill-teach">Skill You Can Teach</label>
+              <input
+                id="skill-teach"
+                name="skillTeach"
+                type="text"
+                list="teach-skills"
+                placeholder="Type or select a skill"
+              />
+              <datalist id="teach-skills">
+                <option value="Web Development"></option>
+                <option value="Graphic Design"></option>
+                <option value="Guitar"></option>
+                <option value="Piano"></option>
+                <option value="Python Programming"></option>
+                <option value="Video Editing"></option>
+                <option value="Photography"></option>
+                <option value="Public Speaking"></option>
+                <option value="Drawing"></option>
+                <option value="Singing"></option>
+                <option value="Cooking"></option>
+                <option value="Writing"></option>
+                <option value="Calligraphy"></option>
+                <option value="Chess"></option>
+                <option value="Yoga"></option>
+                <option value="Coding"></option>
+                <option value="Meditation"></option>
+                <option value="Animation"></option>
+                <option value="Dancing"></option>
+                <option value="Social Media"></option>
+                <option value="HTML"></option>
+                <option value="CSS"></option>
+                <option value="Excel"></option>
+                <option value="Marketing"></option>
+                <option value="Leadership"></option>
+                <option value="Photography Editing"></option>
+                <option value="Networking"></option>
+                <option value="Podcasting"></option>
+                <option value="3D Modeling"></option>
+                <option value="Game Design"></option>
+              </datalist>
+            </div>
+
+            <div class="form-group">
+              <label for="skill-learn">Skill You Want to Learn</label>
+              <input
+                id="skill-learn"
+                name="skillLearn"
+                type="text"
+                list="learn-skills"
+                placeholder="Type or select a skill"
+              />
+              <datalist id="learn-skills">
+                <option value="Web Development"></option>
+                <option value="Graphic Design"></option>
+                <option value="Guitar"></option>
+                <option value="Piano"></option>
+                <option value="Python Programming"></option>
+                <option value="Video Editing"></option>
+                <option value="Photography"></option>
+                <option value="Public Speaking"></option>
+                <option value="Drawing"></option>
+                <option value="Singing"></option>
+                <option value="Cooking"></option>
+                <option value="Writing"></option>
+                <option value="Calligraphy"></option>
+                <option value="Chess"></option>
+                <option value="Yoga"></option>
+                <option value="Coding"></option>
+                <option value="Meditation"></option>
+                <option value="Animation"></option>
+                <option value="Dancing"></option>
+                <option value="Social Media"></option>
+                <option value="HTML"></option>
+                <option value="CSS"></option>
+                <option value="Excel"></option>
+                <option value="Marketing"></option>
+                <option value="Leadership"></option>
+                <option value="Photography Editing"></option>
+                <option value="Networking"></option>
+                <option value="Podcasting"></option>
+                <option value="3D Modeling"></option>
+                <option value="Game Design"></option>
+              </datalist>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Phone number</label>
+          <input
+            type="tel"
+            name="phonenumber"
+            placeholder="+971 5x-xxx-xxxx"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="you@example.com"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Instagram (handle)</label>
+          <input type="text" name="instagram" placeholder="@yourhandle" />
+        </div>
+
+        <div class="form-group">
+          <label>About you</label>
+          <textarea
+            id="about-you"
+            name="about"
+            placeholder="Name / Short bio / Experience"
+            style="font-family: Poppins"
+          ></textarea>
+        </div>
+
+        <button class="save-button" type="submit">
+          <i class="fa-regular fa-floppy-disk" style="margin-right: 8px"></i
+          >Fulfill Dream Profile
+        </button>
+      </form>
+    </div>
+
+    <script>
+      // --- START NEW CODE BLOCK for Dream Profile Loading ---
+
+      function loadDreamProfile() {
+        // Your Dream Profile Data
+        const dreamProfile = {
+          skillTeach: "Quantum Computing Fundamentals",
+          skillLearn: "Fluent Mandarin (Business)",
+          phone: "+971 55-987-6543",
+          email: "innovator@skillswap.com",
+          instagram: "@TheQuantumLeap",
+          about:
+            "A futurist and software architect specializing in complex systems. I teach cutting-edge tech and seek immersive language mastery to expand global partnerships. Dedicated to continuous, ambitious growth.",
+          profilePicUrl: "https://picsum.photos/96/96?grayscale&blur=1", // A subtle, aspirational placeholder
+        };
+
+        // Set Form Values
+        document.getElementById("skill-teach").value = dreamProfile.skillTeach;
+        document.getElementById("skill-learn").value = dreamProfile.skillLearn;
+        document.querySelector('input[name="phonenumber"]').value =
+          dreamProfile.phone;
+        document.querySelector('input[name="email"]').value =
+          dreamProfile.email;
+        document.querySelector('input[name="instagram"]').value =
+          dreamProfile.instagram;
+        document.getElementById("about-you").value = dreamProfile.about;
+
+        // Set Profile Picture Placeholder
+        const picPreview = document.getElementById("picPreview");
+        picPreview.style.backgroundImage = `url(${dreamProfile.profilePicUrl})`;
+        picPreview.style.backgroundSize = "cover";
+        picPreview.style.backgroundPosition = "center";
+      }
+
+      // --- END NEW CODE BLOCK ---
+
+      // Safety: wait for DOM
+      window.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+        loadDreamProfile(); // Call the new function to populate the form!
+
+        const form = document.getElementById("profileForm");
+        const fileInput = document.getElementById("profile-pic-input");
+        const picPreview = document.getElementById("picPreview");
+        const picPreviewText = document.getElementById("picPreviewText");
+
+        // click preview opens file dialog
+        picPreview.addEventListener("click", () => fileInput.click());
+
+        // show small preview (uses DataURL)
+        fileInput.addEventListener("change", () => {
+          if (!fileInput.files || fileInput.files.length === 0) {
+            picPreview.style.backgroundImage =
+              'url("https://picsum.photos/96/96?grayscale&blur=1")'; // Revert to initial placeholder
+            picPreview.style.backgroundSize = "cover";
+            picPreviewText.textContent = "";
+            return;
+          }
+          const f = fileInput.files[0];
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            picPreview.style.backgroundImage = `url(${ev.target.result})`;
+            picPreview.style.backgroundSize = "cover";
+            picPreviewText.textContent = "";
+          };
+          reader.readAsDataURL(f);
+        });
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          // build profile object
+          const profile = {
+            skillTeach: document.getElementById("skill-teach").value.trim(),
+            skillLearn: document.getElementById("skill-learn").value.trim(),
+            phone: (
+              form.querySelector('input[name="phonenumber"]') || {}
+            ).value.trim(),
+            email: (
+              form.querySelector('input[name="email"]') || {}
+            ).value.trim(),
+            instagram: (
+              form.querySelector('input[name="instagram"]') || {}
+            ).value.trim(),
+            about: document.getElementById("about-you").value.trim(),
+            profilePic: null,
+            createdAt: new Date().toISOString(),
+          };
+
+          // if there's an image, convert to DataURL, then save
+          if (fileInput.files && fileInput.files.length > 0) {
+            const reader = new FileReader();
+            reader.onload = function (evt) {
+              profile.profilePic = evt.target.result;
+              saveProfileToLocal(profile);
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+          } else {
+            // Check if the dream profile pic URL is currently visible
+            const currentStyle = picPreview.style.backgroundImage;
+            if (currentStyle && currentStyle.includes("picsum.photos")) {
+              // If no new image is uploaded, but a placeholder is present, save the placeholder URL
+              profile.profilePic = currentStyle.match(
+                /url\(['"]?(.*?)['"]?\)/
+              )[1];
+            }
+            saveProfileToLocal(profile);
+          }
+        });
+
+        function saveProfileToLocal(profile) {
+          const key = "userProfiles";
+          const existing = JSON.parse(localStorage.getItem(key)) || [];
+          existing.unshift(profile); // newest first
+          localStorage.setItem(key, JSON.stringify(existing));
+          alert("DREAM PROFILE SAVED! Open Browse Skills to see the card.");
+          // optional: open browse page in new tab automatically
+          // window.open('skillmain.html', '_blank');
+        }
+      });
+    </script>
+  </body>
+</html>
