@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SkillSwap — Browse Skills</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script
+      src="https://kit.fontawesome.com/a95fd4cc0b.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0e1628;
+        --card: #1f2a3a;
+        --input: #2b3543;
+        --teal: #1aae9f;
+        --muted: #9ca3af;
+        --text: #e5e7eb;
+        --pending: #ffc82a;
+      }
+
+      body {
+        font-family: Poppins;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      .sidebar {
+        width: 250px;
+        background: var(--sidebar);
+        padding: 22px;
+        border-right: 1px solid rgba(255, 255, 255, 0.04);
+        position: fixed;
+        height: 100%;
+      }
+
+      .sidebar h3 {
+        color: var(--teal);
+        margin: 0 0 6px 0;
+      }
+
+      .sidebar p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .nav a {
+        display: block;
+        color: var(--text);
+        padding: 10px;
+        border-radius: 8px;
+        text-decoration: none;
+        margin-top: 12px;
+        transition: 0.2s;
+      }
+
+      .nav a:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .nav a.active {
+        background: rgba(26, 174, 159, 0.12);
+        color: var(--teal);
+        border-left: 4px solid var(--teal);
+        padding-left: 14px;
+      }
+
+      /* Main Content Styling */
+      .main-content {
+        margin-left: 250px;
+        padding: 22px;
+      }
+
+      h1 {
+        color: var(--text);
+        margin-top: 0;
+        font-size: 24px;
+      }
+
+      .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      /* Skill Card Styling */
+      .skill-card {
+        background: var(--card);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .skill-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .card-header img {
+        width: 60px;
+        height: 60px;
+        border-radius: 999px;
+        margin-right: 15px;
+        border: 2px solid var(--teal);
+        object-fit: cover;
+      }
+
+      .card-header .name {
+        font-weight: 600;
+        font-size: 18px;
+        margin: 0;
+      }
+
+      .card-header .instagram {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .about-text {
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 15px;
+        line-height: 1.4;
+        flex-grow: 1;
+      }
+
+      .skill-tag {
+        background: var(--input);
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        display: inline-flex;
+        align-items: center;
+        font-weight: 500;
+      }
+
+      .skill-tag.teach {
+        border: 1px solid var(--teal);
+        color: var(--teal);
+      }
+
+      .skill-tag.learn {
+        border: 1px solid #e0b400;
+        color: var(--pending);
+      }
+
+      .no-profiles {
+        background: var(--card);
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        color: var(--muted);
+        margin-top: 50px;
+      }
+
+      /* Propose Button */
+      .propose-button {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        background: var(--teal);
+        color: white;
+        border: 0;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background 0.2s;
+      }
+
+      .propose-button:hover {
+        background: #159a8c;
+      }
+
+      /* Modal Styles */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: var(--card);
+        padding: 25px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 450px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        animation: slide-in 0.3s ease-out;
+      }
+
+      .modal-content h3 {
+        margin-top: 0;
+        color: var(--teal);
+      }
+
+      .modal-content label {
+        color: var(--muted);
+        font-size: 14px;
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 5px;
+      }
+
+      .modal-content input,
+      .modal-content textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        background: var(--input);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: var(--text);
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .modal-actions button {
+        flex: 1;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .modal-actions .submit {
+        background: var(--teal);
+        color: white;
+      }
+
+      .modal-actions .cancel {
+        background: var(--input);
+        color: var(--muted);
+      }
+
+      @keyframes slide-in {
+        from {
+          transform: translateY(-50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .main-content {
+          margin-left: 0;
+        }
+
+        .sidebar {
+          position: static;
+          width: 100%;
+          height: auto;
+          border-right: none;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <aside class="sidebar">
+      <h3>Skill Swap</h3>
+      <p>Trade skills, grow together</p>
+      <nav class="nav" style="margin-top: 18px">
+        <a href="skillmain.html" class="active">
+          <i class="fa-regular fa-house" style="margin-right: 8px"></i>Browse
+          Skills</a
+        >
+        <a href="myswaps.html">
+          <i class="fa-solid fa-retweet" style="margin-right: 8px"></i>My
+          Swaps</a
+        >
+        <a href="profile.html"
+          ><i class="fa-regular fa-user" style="margin-right: 8px"></i>My
+          Profile</a
+        >
+        <a href="rfeedback.html"
+          ><i class="fa-regular fa-envelope" style="margin-right: 8px"></i
+          >Feedback</a
+        >
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <h1>
+        <i
+          class="fa-regular fa-house"
+          style="color: #1aae9f; margin-right: 8px"
+        ></i
+        >Available Skill Swaps
+      </h1>
+      <div class="profile-grid" id="profileGrid"></div>
+
+      <div class="no-profiles" id="noProfilesMessage" style="display: none">
+        <i class="fa-solid fa-face-sad-tear fa-2x" style="color: #4b5563"></i>
+        <h3 style="color: var(--text); margin-top: 10px">No Profiles Found</h3>
+        <p>Go to **My Profile** to create your own skill swap listing.</p>
+      </div>
+    </div>
+
+    <div class="modal" id="proposeModal">
+      <div class="modal-content">
+        <h3>Propose a Swap</h3>
+        <p style="color: var(--muted); font-size: 14px">
+          You are offering <strong id="modal-offer-skill"></strong> to learn
+          <strong id="modal-learn-skill"></strong>.
+        </p>
+        <form id="proposeForm">
+          <input type="hidden" id="proposer-skill" />
+          <input type="hidden" id="target-skill" />
+          <input type="hidden" id="target-name" />
+
+          <label for="swap-duration"
+            >Suggested Duration (e.g., 4 weeks, 6 sessions)</label
+          >
+          <input
+            id="swap-duration"
+            type="text"
+            placeholder="e.g., 2 weeks"
+            required
+          />
+
+          <label for="swap-notes">Notes / Message</label>
+          <textarea
+            id="swap-notes"
+            placeholder="Suggested meeting times, method (online/in-person), etc."
+          ></textarea>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="cancel"
+              onclick="document.getElementById('proposeModal').style.display='none'"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="submit">Send Proposal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+        loadProfiles();
+        setupModalListeners();
+      });
+
+      // ---------------------------------------------
+      // PROFILE CARD RENDERING (Same as before)
+      // ---------------------------------------------
+
+      function loadProfiles() {
+        const grid = document.getElementById("profileGrid");
+        const noProfilesMessage = document.getElementById("noProfilesMessage");
+        // Using userProfiles array which holds the current user's listing AND others (if we had a real backend)
+        // For the demo, we load all saved profiles.
+        let profiles = JSON.parse(localStorage.getItem("userProfiles")) || [];
+
+        // To ensure the user doesn't see their own card, we would typically filter by an ID.
+        // Since we don't have IDs, let's just make sure there's data to show.
+
+        if (profiles.length === 0) {
+          noProfilesMessage.style.display = "block";
+          return;
+        }
+
+        noProfilesMessage.style.display = "none";
+
+        profiles.forEach((profile) => {
+          const cardHtml = createProfileCard(profile);
+          grid.insertAdjacentHTML("beforeend", cardHtml);
+        });
+      }
+
+      function createProfileCard(profile) {
+        const name = profile.about.split("/")[0].trim() || "Skill Swapper";
+        const profilePicUrl =
+          profile.profilePic || "https://picsum.photos/60/60?random=1";
+
+        // If the user hasn't specified both skills, we can't propose a full swap.
+        const canPropose = profile.skillTeach && profile.skillLearn;
+
+        return `
+                <div class="skill-card">
+                    <div class="card-header">
+                        <img src="${profilePicUrl}" alt="${name}'s profile picture">
+                        <div>
+                            <p class="name">${name}</p>
+                            ${
+                              profile.instagram
+                                ? `<p class="instagram">@${profile.instagram.replace(
+                                    "@",
+                                    ""
+                                  )}</p>`
+                                : ""
+                            }
+                        </div>
+                    </div>
+
+                    <p class="about-text">${profile.about}</p>
+
+                    <div>
+                        ${
+                          profile.skillTeach
+                            ? `
+                            <span class="skill-tag teach">
+                                <i class="fa-solid fa-graduation-cap" style="margin-right:5px"></i>
+                                Teach: ${profile.skillTeach}
+                            </span>
+                        `
+                            : ""
+                        }
+
+                        ${
+                          profile.skillLearn
+                            ? `
+                            <span class="skill-tag learn">
+                                <i class="fa-solid fa-book-open" style="margin-right:5px"></i>
+                                Learn: ${profile.skillLearn}
+                            </span>
+                        `
+                            : ""
+                        }
+                    </div>
+                    
+                    ${
+                      canPropose
+                        ? `
+                        <button class="propose-button" 
+                            data-target-name="${name}"
+                            data-skill-offered="${profile.skillLearn}"
+                            data-skill-requested="${profile.skillTeach}">
+                            <i class="fa-solid fa-paper-plane" style="margin-right:8px;"></i>
+                            Propose Swap
+                        </button>
+                    `
+                        : `
+                        <button class="propose-button" disabled style="opacity: 0.6; cursor: not-allowed; background: var(--input);">
+                            <i class="fa-solid fa-circle-exclamation" style="margin-right:8px;"></i>
+                            Skills not fully defined
+                        </button>
+                    `
+                    }
+                </div>
+            `;
+      }
+
+      // ---------------------------------------------
+      // PROPOSE MODAL LOGIC (New)
+      // ---------------------------------------------
+
+      function setupModalListeners() {
+        const modal = document.getElementById("proposeModal");
+        const form = document.getElementById("proposeForm");
+        const grid = document.getElementById("profileGrid");
+
+        // 1. Open Modal Listener (delegated to the grid)
+        grid.addEventListener("click", (e) => {
+          const button = e.target.closest(".propose-button:not([disabled])");
+          if (!button) return;
+
+          const targetName = button.getAttribute("data-target-name");
+          const skillOffered = button.getAttribute("data-skill-offered");
+          const skillRequested = button.getAttribute("data-skill-requested");
+
+          // Update modal content
+          document.getElementById("modal-offer-skill").textContent =
+            skillOffered;
+          document.getElementById("modal-learn-skill").textContent =
+            skillRequested;
+
+          // Set hidden fields for form submission
+          document.getElementById("proposer-skill").value = skillOffered;
+          document.getElementById("target-skill").value = skillRequested;
+          document.getElementById("target-name").value = targetName;
+
+          modal.style.display = "flex";
+        });
+
+        // 2. Form Submission Listener
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const proposerName = "You"; // Hardcoded since we assume the logged-in user is 'You'
+
+          // Gather data from form and hidden fields
+          const newSwap = {
+            id: Date.now(), // Simple unique ID
+            skillOffered: document.getElementById("proposer-skill").value,
+            skillRequested: document.getElementById("target-skill").value,
+            proposer: proposerName,
+            target: document.getElementById("target-name").value,
+            duration: document.getElementById("swap-duration").value.trim(),
+            notes: document.getElementById("swap-notes").value.trim(),
+            status: "pending", // All proposals start as pending
+          };
+
+          saveNewSwap(newSwap);
+
+          // Close and reset modal
+          modal.style.display = "none";
+          form.reset();
+
+          alert(
+            `Proposal sent to ${newSwap.target}! Check 'My Swaps' to track its status.`
+          );
+        });
+      }
+
+      function saveNewSwap(swap) {
+        const key = "userSwaps";
+        const currentSwaps = JSON.parse(localStorage.getItem(key)) || [];
+        currentSwaps.push(swap);
+        localStorage.setItem(key, JSON.stringify(currentSwaps));
+      }
+
+      // Click outside the modal to close it
+      window.onclick = (event) => {
+        const modal = document.getElementById("proposeModal");
+        if (event.target === modal) {
+          modal.style.display = "none";
+        }
+      };
+    </script>
+  </body>
+</html>
