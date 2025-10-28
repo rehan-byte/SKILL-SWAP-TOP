@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skill Swap - Learn, Teach, Grow</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://kit.fontawesome.com/a95fd4cc0b.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --color-dark-bg: #0e1628;
+            --color-card-bg: #1c2a3f;
+            --color-sidebar-bg: #10192e;
+            --color-teal-accent: #1aae9f;
+            --color-text-light: #e5e7eb;
+            --color-text-muted: #9ca3af;
+            --color-card-border: #374151;
+            /* Enhanced Gradient for Primary Button */
+            --color-primary-gradient-start: #1aae9f;
+            --color-primary-gradient-end: #108c7e;
+            --color-active-bg: rgba(26, 174, 159, 0.15);
+        }
+
+        /* Base Styles - Font family changed to Poppins */
+        body {
+            font-family: "Poppins", sans-serif;
+            background-color: var(--color-dark-bg);
+            color: var(--color-text-light);
+            margin: 0;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            /* Subtle dark noise pattern for depth */
+            background-image: radial-gradient(circle at 1px 1px,
+                    #141c2c 1px,
+                    transparent 0);
+            background-size: 20px 20px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        p {
+            color: var(--color-text-muted);
+        }
+
+        /* Structural Styles */
+        section {
+            padding: 80px 0;
+            max-width: none;
+            margin: 0;
+        }
+
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+
+        /* Special Case for Hero Section */
+        #hero {
+            text-align: center;
+            padding: 100px 5% 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+
+
+
+
+        /* FIX: Hide the Hero Visual Element */
+        .hero-visual {
+            display: none !important;
+        }
+
+        #hero>* {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- ANIMATION STYLES --- */
+
+        /* 1. Keyframes */
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* NEW KEYFRAME: Simple fade for the sticky header */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* 2. Initial State Class (Applied to all elements to be animated) */
+        .load-hidden {
+            opacity: 0 !important;
+        }
+
+        /* 3. Animation Classes (Applied by JavaScript on load) */
+
+        /* NEW: Only fade-in the sticky header background/structure */
+        .animate-nav-bar {
+            animation: fadeIn 0.4s ease-out forwards;
+            animation-delay: 0.1s;
+        }
+
+        /* NEW: Slide up the content inside the sticky header */
+        .animate-nav-links {
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+            animation-delay: 0.2s;
+        }
+
+        .animate-hero {
+            animation: fadeInSlideUp 0.8s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+
+        .animate-cta {
+            animation: fadeInSlideUp 0.8s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        /* --- Navigation Bar (Crucial FIX: Transform removed from sticky element) --- */
+        .header {
+            background-color: var(--color-sidebar-bg);
+            border-bottom: 1px solid var(--color-card-border);
+            position: sticky;
+            /* Sticky is preserved here */
+            top: 0;
+            z-index: 20;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* When the header is animated, we only want it to fade in, not slide */
+        .header.animate-nav-bar {
+            transform: none !important;
+            /* Ensure no transform interferes with sticky */
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text-light);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            color: var(--color-teal-accent);
+            margin-right: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-teal-accent);
+        }
+
+        /* Gradient CTA Button Styling */
+        .cta-button {
+            background: linear-gradient(180deg,
+                    var(--color-primary-gradient-start),
+                    var(--color-primary-gradient-end));
+            color: var(--color-dark-bg);
+            /* Text color should be dark for contrast */
+            padding: 10px 20px;
+            border-radius: 6px;
+            /* Curved edges */
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(26, 174, 159, 0.3);
+            border: none;
+            /* No default border */
+
+            /* Ensure it's treated as a block/inline-block for padding/margins */
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transition: transform 0.2s, box-shadow 0.2s;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(26, 174, 159, 0.4);
+        }
+
+        /* FIX: Prevent .nav-links a from overriding cta-button styles */
+        .nav-links a.cta-button {
+            color: var(--color-dark-bg);
+            /* Explicitly set text color for the button */
+        }
+
+        /* Secondary CTA button style */
+        .cta-button-secondary {
+
+            background-color: var(--color-card-bg) !important;
+            border: 1px solid var(--color-teal-accent) !important;
+            color: var(--color-teal-accent) !important;
+            box-shadow: none;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-light);
+            cursor: pointer;
+        }
+
+        /* --- Global Section Headers --- */
+        #features h2,
+        #how-it-works h2,
+        #stats-impact h2,
+        #faq h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+        }
+
+        /* --- Features Grid --- */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        /* --- Feature Card Styles (Confirmed correct) --- */
+        .feature-card {
+            background-color: var(--color-dark-bg);
+            border: 1px solid var(--color-card-border);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon-wrapper {
+            background-color: var(--color-active-bg);
+            color: var(--color-teal-accent);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* --- How It Works Steps Layout --- */
+        .steps-container {
+            display: flex;
+            /* Use flexbox to arrange items horizontally */
+            gap: 30px;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-top: 20px;
+            flex-wrap: wrap;
+            /* Allow wrapping on smaller screens */
+            position: relative;
+            /* Needed for the ::before line */
+        }
+
+        /* Add a line connecting the steps */
+        .steps-container::before {
+            content: "";
+            position: absolute;
+            /* Adjust to run just above the step-numbers */
+            top: 45px;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background-color: var(--color-card-border);
+            z-index: 0;
+            max-width: 1100px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1 1 200px;
+            /* Allow items to grow but have a minimum width */
+            max-width: 280px;
+        }
+
+        .step-number {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--color-teal-accent);
+            color: var(--color-dark-bg);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            box-shadow: 0 0 0 8px rgba(26, 174, 159, 0.2);
+            /* Subtle glow effect */
+            position: relative;
+            z-index: 5;
+            /* Ensure numbers sit above the connecting line */
+        }
+
+        .step-content h3 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--color-text-light);
+        }
+
+        /* --- Stats & Commitment Section Styles --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .stat-card {
+            background-color: var(--color-card-bg);
+            border: 1px solid var(--color-card-border);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: left;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .commitment-icon {
+            color: var(--color-teal-accent);
+            margin-bottom: 15px;
+        }
+
+        .commitment-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--color-text-light);
+        }
+
+        .commitment-description {
+            color: var(--color-text-muted);
+        }
+
+        /* --- FAQ Section Styles (Accordion) (FIXED/ADDED) --- */
+        .faq-container {
+            max-width: 900px;
+            margin: 40px auto 0;
+            border: 1px solid var(--color-card-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--color-card-border);
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            background-color: var(--color-sidebar-bg);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .faq-question:hover {
+            background-color: #162035;
+        }
+
+        .faq-question svg {
+            transition: transform 0.3s;
+        }
+
+        .faq-question.active {
+            background-color: #162035;
+            color: var(--color-teal-accent);
+        }
+
+        .faq-question.active svg {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            background-color: var(--color-card-bg);
+            max-height: 0;
+            /* Key for accordion collapsing */
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+        }
+
+        .faq-answer p {
+            padding: 10px 30px 20px;
+            margin: 0;
+            color: var(--color-text-muted);
+        }
+
+        /* --- Footer Styles (FIXED/ADDED) --- */
+        .footer {
+            padding: 40px 5%;
+            text-align: center;
+            border-top: 1px solid var(--color-card-border);
+        }
+
+        .footer-links {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--color-teal-accent);
+        }
+
+        .footer p {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Media query for smaller screens */
+        @media (max-width: 768px) {
+            .steps-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 40px;
+            }
+
+            .steps-container::before {
+                display: none;
+                /* Hide the connecting line on mobile */
+            }
+
+            .step-item {
+                max-width: 100%;
+            }
+        }
+
+        /* Hide navbar on screens below 768px (phones) */
+        @media (max-width: 768px) {
+            nav {
+                display: none !important;
+            }
+
+            #main-header {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                /* vertical center */
+                align-items: center;
+                /* horizontal center */
+                text-align: center;
+
+
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header load-hidden" id="main-header">
+        <a href="#" class="logo load-hidden" id="logo-link">
+            <i data-lucide="repeat-2" class="logo-icon" width="24" height="24"></i>
+            Skill Swap
+        </a>
+
+        <nav id="nav-menu" class="nav-links load-hidden">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#stats-impact">Commitment</a>
+            <a href="#faq">FAQ</a>
+            <a href="skillmain.html" class="cta-button">Get Started</a>
+
+
+
+        </nav>
+
+        <button class="menu-toggle" aria-expanded="false" aria-controls="nav-menu" onclick="toggleMenu()">
+            <i data-lucide="menu" width="30" height="30"></i>
+        </button>
+    </header>
+
+    <section id="hero">
+        <svg id="hero-visual" class="hero-visual" width="700" height="700" viewBox="0 0 700 700" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M350 100C450 100 600 250 600 350C600 450 450 600 350 600C250 600 100 450 100 350C100 250 250 100 350 100Z"
+                stroke="#1aae9f" stroke-width="20" stroke-opacity="0.1" fill="none" />
+            <circle cx="350" cy="350" r="150" fill="#1aae9f" fill-opacity="0.05" />
+        </svg>
+
+        <h1 class="load-hidden" id="hero-h1" style="color: #1aae9f;">
+            Unlock Your Potential Through Skill Exchange.
+        </h1>
+        <p class="load-hidden" id="hero-p">
+            Connect with a global community to share what you know and learn what
+            you need, completely for free. Stop waiting, start growing.
+        </p>
+        <div class="hero-cta-group load-hidden" id="hero-cta">
+            <a href="skillmain.html" class="cta-button">Start Swapping Now</a>
+            <a href="#features" class="cta-button cta-secondary">Explore Features</a>
+        </div>
+    </section>
+
+    <section id="features" style="
+        background-color: var(--color-card-bg);
+        border-top: 1px solid var(--color-card-border);
+      ">
+        <div class="content-container">
+            <h2>Why Choose Skill Swap?</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i data-lucide="search" width="24" height="24"></i>
+                    </div>
+                    <h3>Discover</h3>
+                    <p>
+                        Easily find users offering skills you want to learn, from
+                        programming and design to cooking and foreign languages.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i data-lucide="repeat-2" width="24" height="24"></i>
+                    </div>
+                    <h3>Swap</h3>
+                    <p>
+                        Propose a fair exchange: teach your best skill in return for
+                        theirs. Our platform manages all your proposals and active
+                        exchanges.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i data-lucide="users" width="24" height="24"></i>
+                    </div>
+                    <h3>Grow</h3>
+                    <p>
+                        Expand your professional and personal network, master new crafts,
+                        and build confidence through genuine peer-to-peer learning.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i data-lucide="trending-up" width="24" height="24"></i>
+                    </div>
+                    <h3>Track Progress</h3>
+                    <p>
+                        Use the dedicated 'My Swaps' dashboard to monitor your active
+                        exchanges and easily view your completed learning history.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i data-lucide="message-circle" width="24" height="24"></i>
+                    </div>
+                    <h3>Skill Swap on Mobile</h3>
+                    <p>
+                        Learn and teach anytime, anywhere with Skill Swap's mobile-friendly platform. All your swaps are
+                        just a tap away.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i data-lucide="zap" width="24" height="24"></i>
+                    </div>
+                    <h3>Advanced Skill Search</h3>
+                    <p>
+                        Quickly discover the exact skills you want to learn. Use smart filters to find the perfect match
+                        based solely on skill expertise..
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works">
+        <div class="content-container">
+            <h2>How It Works: Simple Steps to Success</h2>
+            <div class="steps-container">
+                <div class="step-item">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <h3>Set Up Your Profile</h3>
+                        <p>
+                            Tell the community what skills you Offer and what skills you
+                            Want to Learn.
+                        </p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <h3>Browse & Find</h3>
+                        <p>
+                            Explore the network using the Browse Skills tab to find the
+                            perfect learning partner.
+                        </p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <h3>Propose a Swap</h3>
+                        <p>
+                            Send a proposal for a skill exchange. Once accepted, your new
+                            swap appears under the My Swaps tab!
+                        </p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <h3>Review & Complete</h3>
+                        <p>
+                            Once your exchange is finished, mark the swap as complete and
+                            provide valuable feedback to help the community thrive.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="stats-impact">
+        <div class="content-container">
+            <h2>Our Community Commitment</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i data-lucide="shield-check" class="commitment-icon" width="36" height="36"></i>
+                    <div class="commitment-title">Quality Matchmaking</div>
+                    <div class="commitment-description">
+                        We prioritize 1:1 tailored connections over mass volume to ensure
+                        every swap is valuable and meaningful.
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i data-lucide="message-square" class="commitment-icon" width="36" height="36"></i>
+                    <div class="commitment-title">Direct Beta Support</div>
+                    <div class="commitment-description">
+                        As a new member, you'll have direct access to our founding team
+                        for help, feedback, and feature requests.
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i data-lucide="award" class="commitment-icon" width="36" height="36"></i>
+                    <div class="commitment-title">Verified Expertise</div>
+                    <div class="commitment-description">
+                        We're focused on building a community where all listed skills are
+                        validated, trusted, and taught by genuine experts.
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i data-lucide="globe" class="commitment-icon" width="36" height="36"></i>
+                    <div class="commitment-title">Equitable Global Reach</div>
+                    <div class="commitment-description">
+                        Our mission is to expand rapidly and equitably, ensuring access to
+                        free learning regardless of location or income.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" style="background-color: var(--color-card-bg)">
+        <div class="content-container">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(this)">
+                        Is Skill Swap really free to use?
+                        <i data-lucide="chevron-down" width="20" height="20"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Absolutely! Skill Swap is built on the principle of peer-to-peer
+                            exchange. There are no monetary transactions required—only the
+                            fair exchange of knowledge and time between users. Your
+                            commitment is only to teach the skill you offered.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(this)">
+                        How does the "swapping" process actually work?
+                        <i data-lucide="chevron-down" width="20" height="20"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            The process is simple: you browse the skills marketplace, find a
+                            skill you want to learn, and propose a trade using one of the
+                            skills you offer. If the other user accepts, the swap moves to
+                            your 'My Swaps' dashboard where you can begin your learning
+                            sessions.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(this)">
+                        What happens if a user is unresponsive during a swap?
+                        <i data-lucide="chevron-down" width="20" height="20"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            We encourage clear communication from the start. If
+                            communication breaks down, you can report the issue through your
+                            'My Swaps' dashboard, and the platform will review the exchange
+                            and provide options to resolve or cancel the swap gracefully.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(this)">
+                        What kind of skills can I offer or request?
+                        <i data-lucide="chevron-down" width="20" height="20"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Almost anything! Our community swaps skills ranging from
+                            professional topics (Web Development, Data Analysis) to
+                            personal hobbies (Gardening, Baking, Instrument Playing) and
+                            practical skills (Resume Writing, Car Maintenance). If you
+                            know it, you can swap it!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer" style="background-color: var(--color-sidebar-bg)">
+        <div class="footer-links">
+            <a href="">Privacy Policy</a>
+            <a href="">Terms of Service</a>
+            <a href="rfeedback.html">Contact Us</a>
+        </div>
+        <p>&copy; 2025 Skill Swap Platform. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle Logic
+        function toggleMenu() {
+            const navMenu = document.getElementById("nav-menu");
+            const menuToggle = document.querySelector(".menu-toggle");
+            const isExpanded =
+                menuToggle.getAttribute("aria-expanded") === "true" || false;
+
+            navMenu.classList.toggle("open");
+            menuToggle.setAttribute("aria-expanded", !isExpanded);
+        }
+
+        // Close menu when a link is clicked on mobile
+        document.getElementById("nav-menu").addEventListener("click", (e) => {
+            if (e.target.tagName === "A" && window.innerWidth <= 768) {
+                toggleMenu();
+            }
+        });
+
+        // FAQ Accordion Toggle Logic (The robust fix)
+        function toggleAnswer(questionElement) {
+            const parentItem = questionElement.closest(".faq-item");
+            const answer = parentItem.querySelector(".faq-answer");
+
+            const isClosing = questionElement.classList.contains("active");
+
+            // Close all other open answers
+            document
+                .querySelectorAll(".faq-question.active")
+                .forEach((otherQuestion) => {
+                    otherQuestion.classList.remove("active");
+                    otherQuestion
+                        .closest(".faq-item")
+                        .querySelector(".faq-answer").style.maxHeight = null;
+                });
+
+            // Open the clicked answer
+            if (!isClosing) {
+                questionElement.classList.add("active");
+
+                // Use 'none' temporarily to measure scrollHeight accurately
+                answer.style.maxHeight = "none";
+
+                const scrollHeight = answer.scrollHeight;
+
+                // Set back to 0 then to scrollHeight to re-trigger transition
+                answer.style.maxHeight = "0";
+
+                requestAnimationFrame(() => {
+                    answer.style.maxHeight = scrollHeight + "px";
+                });
+            }
+        }
+
+        // --- INITIAL LOAD ANIMATION LOGIC (FIXED FOR STICKY HEADER) ---
+        window.onload = function () {
+            // Find elements
+            const header = document.getElementById("main-header");
+            const logo = document.getElementById("logo-link"); // Added to animate logo separately
+            const navLinks = document.getElementById("nav-menu");
+            const h1 = document.getElementById("hero-h1");
+            const p = document.getElementById("hero-p");
+            const cta = document.getElementById("hero-cta");
+
+            // 1. Animate Header (Fade in only)
+            if (header) {
+                header.classList.remove("load-hidden");
+                header.classList.add("animate-nav-bar");
+            }
+
+            // 2. Animate Logo (Slide up - separate from header)
+            if (logo) {
+                logo.classList.remove("load-hidden");
+                logo.classList.add("animate-nav-links");
+            }
+
+            // 3. Animate Navigation Links (Slide up - separate from header)
+            if (navLinks) {
+                navLinks.classList.remove("load-hidden");
+                navLinks.classList.add("animate-nav-links");
+            }
+
+            // 4. Animate Hero Text (delayed after header)
+            if (h1) {
+                h1.classList.remove("load-hidden");
+                h1.classList.add("animate-hero");
+            }
+            if (p) {
+                p.classList.remove("load-hidden");
+                p.classList.add("animate-hero");
+                p.style.animationDelay = "0.4s";
+            }
+
+            // 5. Animate CTA Buttons (delayed after text)
+            if (cta) {
+                cta.classList.remove("load-hidden");
+                cta.classList.add("animate-cta");
+            }
+
+            lucide.createIcons();
+        };
+
+        // Dynamic Parallax Effect (won't run if heroVisual is hidden)
+        const heroVisual = document.getElementById("hero-visual");
+        const heroSection = document.getElementById("hero");
+        function handleScroll() {
+            if (!heroVisual || !heroSection || heroVisual.style.display === "none") return;
+            const scrollY = window.scrollY;
+            const heroHeight = heroSection.offsetHeight;
+            if (scrollY < heroHeight) {
+                const movement = scrollY * 0.2;
+                heroVisual.style.transform = translateX(-50%) translateY(${movement}px);
+            }
+        }
+        window.addEventListener("scroll", handleScroll);
+
+
+
+
+
+
+
+
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Scroll animations
+        const animateOnScroll = () => {
+            document.querySelectorAll('.feature-card, .section-title, .beta-content, .timeline-item, .app-feature').forEach(element => {
+                if (element) {
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.3;
+                    element.style.opacity = elementPosition < screenPosition ? '1' : '0';
+                    element.style.transform = elementPosition < screenPosition ? 'translateY(0)' : 'translateY(20px)';
+                }
+            });
+        };
+
+
+    </script>
+</body>
+
+</html>
