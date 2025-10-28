@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Swaps Dashboard</title>
+    <script
+      src="https://kit.fontawesome.com/a95fd4cc0b.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* Shared Root Variables */
+      :root {
+        --bg: #0e1628;
+        --card: #1f2a3a;
+        --input: #2b3543;
+        --teal: #1aae9f;
+        --muted: #9ca3af;
+        --text: #e5e7eb;
+
+        /* Custom Swaps Variables (from your code) */
+        --color-bg-dark: #121621;
+        --color-card-dark: #1e2535;
+        --color-text-light: #e5e7eb;
+        --color-primary: #37b79a;
+        --color-pending: #d97706;
+        --color-completed: #4b5563;
+      }
+
+      /* Project-Wide Sidebar & Layout CSS */
+      body {
+        font-family: Poppins;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      .sidebar {
+        width: 250px;
+        background: var(--sidebar);
+        padding: 22px;
+        border-right: 1px solid rgba(255, 255, 255, 0.04);
+        position: fixed;
+        height: 100%;
+      }
+
+      .sidebar h3 {
+        color: var(--teal);
+        margin: 0 0 6px 0;
+      }
+
+      .sidebar p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .nav a {
+        display: block;
+        color: var(--text);
+        padding: 10px;
+        border-radius: 8px;
+        text-decoration: none;
+        margin-top: 12px;
+        transition: 0.2s;
+      }
+
+      .nav a:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .nav a.active {
+        background: rgba(26, 174, 159, 0.12);
+        color: var(--teal);
+        border-left: 4px solid var(--teal);
+        padding-left: 14px;
+      }
+
+      /* Main Content Wrapper */
+      .main-content {
+        margin-left: 250px;
+        padding: 22px;
+      }
+
+      @media (max-width: 900px) {
+        .main-content {
+          margin-left: 0;
+        }
+        .sidebar {
+          position: static;
+          width: 100%;
+          height: auto;
+          border-right: none;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+      }
+      /* End Project-Wide CSS */
+
+      /* Your Dashboard CSS starts here */
+      .container {
+        max-width: 1200px;
+        padding: 0; /* Remove padding since main-content provides it */
+        margin: 0;
+      }
+
+      .header {
+        padding: 0 0 20px 0;
+      }
+
+      .header h1 {
+        font-size: 24px;
+        font-weight: 800;
+        margin: 0;
+        line-height: 1;
+        color: var(--text);
+      }
+
+      .header p {
+        color: var(--color-completed);
+        margin-top: 5px;
+        font-size: 14px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+
+      .stat-card {
+        background-color: var(--card); /* Using general card color */
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-3px);
+      }
+
+      .stat-card h3 {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--muted); /* Using general muted color */
+      }
+
+      .stat-card .value {
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .stat-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+        display: inline-block;
+      }
+
+      .stat-card.total .stat-icon {
+        color: var(--teal); /* Using general teal */
+      }
+
+      .stat-card.pending .stat-icon {
+        color: var(--color-pending);
+      }
+
+      .stat-card.active .stat-icon {
+        color: var(--teal); /* Using general teal */
+      }
+
+      .stat-card.completed .stat-icon {
+        color: var(--color-completed);
+      }
+
+      .swaps-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .swap-card {
+        background-color: var(--card); /* Using general card color */
+        padding: 20px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      .swap-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .swap-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+
+      .swap-status {
+        font-weight: 600;
+      }
+
+      .swap-details p {
+        margin: 2px 0;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .swap-details strong {
+        color: var(--text);
+      }
+
+      .swap-actions button {
+        background-color: var(--teal); /* Using general teal */
+        color: var(--bg);
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-right: 6px;
+      }
+
+      .swap-actions button.reject {
+        background-color: #ef4444; /* Standard Red */
+        color: white;
+      }
+
+      .swap-actions button.modify {
+        background-color: #6b5b95; /* Purple */
+        color: white;
+      }
+
+      .empty-state {
+        text-align: center;
+        margin-top: 50px;
+        color: var(--color-completed);
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000; /* Ensure modal is on top */
+      }
+
+      .modal-content {
+        background: var(--card); /* Using general card color */
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .modal-content input,
+      .modal-content textarea {
+        padding: 8px;
+        border-radius: 6px;
+        border: none;
+        font-size: 0.9rem;
+        width: 100%;
+        background: var(--input);
+        color: var(--text);
+      }
+
+      .modal-content button {
+        padding: 8px;
+        border-radius: 6px;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+        background: var(--teal); /* Using general teal */
+        color: var(--bg);
+      }
+    </style>
+  </head>
+
+  <body>
+    <aside class="sidebar">
+      <h3>Skill Swap</h3>
+      <p>Trade skills, grow together</p>
+      <nav class="nav" style="margin-top: 18px">
+        <a href="skillmain.html">
+          <i class="fa-regular fa-house" style="margin-right: 8px"></i>Browse
+          Skills</a
+        >
+        <a href="myswaps.html" class="active">
+          <i class="fa-solid fa-retweet" style="margin-right: 8px"></i>My
+          Swaps</a
+        >
+        <a href="profile.html"
+          ><i class="fa-regular fa-user" style="margin-right: 8px"></i>My
+          Profile</a
+        >
+        <a href="rfeedback.html"
+          ><i class="fa-regular fa-envelope" style="margin-right: 8px"></i
+          >Feedback</a
+        >
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <div class="container">
+        <div class="header">
+          <h1>
+            <i
+              class="fa-solid fa-retweet"
+              style="color: var(--teal); margin-right: 8px"
+            ></i>
+            My Swaps
+          </h1>
+          <p>Manage your skill exchange proposals</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card total">
+            <h3>Total</h3>
+            <div class="value">
+              <i class="stat-icon fa-solid fa-users"></i>
+              <span id="stat-total">0</span>
+            </div>
+          </div>
+          <div class="stat-card pending">
+            <h3>Pending</h3>
+            <div class="value">
+              <i class="stat-icon fa-solid fa-clock"></i>
+              <span id="stat-pending">0</span>
+            </div>
+          </div>
+          <div class="stat-card active">
+            <h3>Active</h3>
+            <div class="value">
+              <i class="stat-icon fa-solid fa-check-circle"></i>
+              <span id="stat-active">0</span>
+            </div>
+          </div>
+          <div class="stat-card completed">
+            <h3>Completed</h3>
+            <div class="value">
+              <i class="stat-icon fa-solid fa-circle-check"></i>
+              <span id="stat-completed">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="swaps-list" id="swaps-list">
+          <div class="empty-state">
+            <i class="fa-solid fa-arrows-rotate" style="font-size: 3rem"></i>
+            <p>No swaps yet. Propose some skills first!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <h3>Modify Swap</h3>
+        <input
+          type="text"
+          id="modal-duration"
+          placeholder="Duration (e.g., 2 weeks)"
+        />
+        <textarea id="modal-notes" placeholder="Notes / message"></textarea>
+        <button id="modal-save">Save Changes</button>
+      </div>
+    </div>
+
+    <script>
+      const swapsList = document.getElementById("swaps-list");
+      const statTotal = document.getElementById("stat-total");
+      const statPending = document.getElementById("stat-pending");
+      const statActive = document.getElementById("stat-active");
+      const statCompleted = document.getElementById("stat-completed");
+
+      // Example initial data for demonstration (you can remove this later)
+      if (!localStorage.getItem("userSwaps")) {
+        localStorage.setItem(
+          "userSwaps",
+          JSON.stringify([
+            {
+              id: 1,
+              skillOffered: "Quantum Computing",
+              skillRequested: "Fluent Mandarin",
+              proposer: "You",
+              target: "Skill Swapper",
+              duration: "4 weeks",
+              notes: "Let's meet via Zoom.",
+              status: "pending",
+            },
+            {
+              id: 2,
+              skillOffered: "Python",
+              skillRequested: "Cooking",
+              proposer: "Alex Chen",
+              target: "You",
+              duration: "8 sessions",
+              notes: "Available evenings.",
+              status: "active",
+            },
+            {
+              id: 3,
+              skillOffered: "Photography",
+              skillRequested: "Web Dev",
+              proposer: "Jane Doe",
+              target: "You",
+              duration: "Completed",
+              notes: "Great experience!",
+              status: "completed",
+            },
+          ])
+        );
+      }
+
+      let swaps = JSON.parse(localStorage.getItem("userSwaps")) || [];
+
+      function updateStats() {
+        statTotal.textContent = swaps.length;
+        statPending.textContent = swaps.filter(
+          (s) => s.status === "pending"
+        ).length;
+        statActive.textContent = swaps.filter(
+          (s) => s.status === "active"
+        ).length;
+        statCompleted.textContent = swaps.filter(
+          (s) => s.status === "completed"
+        ).length;
+      }
+
+      function renderSwaps() {
+        swapsList.innerHTML = "";
+        if (swaps.length === 0) {
+          swapsList.innerHTML = `<div class="empty-state"><i class="fa-solid fa-arrows-rotate" style="font-size:3rem"></i><p>No swaps yet. Propose some skills first!</p></div>`;
+          return;
+        }
+
+        swaps.forEach((s, index) => {
+          const card = document.createElement("div");
+          card.className = "swap-card";
+          card.innerHTML = `
+          <div class="swap-header">
+            <h3>${s.skillOffered} → ${s.skillRequested}</h3>
+            <span class="swap-status" style="color: ${
+              s.status === "pending"
+                ? "var(--color-pending)"
+                : s.status === "active"
+                ? "var(--teal)"
+                : "var(--color-completed)"
+            };">${s.status.toUpperCase()}</span>
+          </div>
+          <div class="swap-details">
+            <p><strong>Proposer:</strong> ${s.proposer}</p>
+            <p><strong>Target:</strong> ${s.target}</p>
+            <p><strong>Duration:</strong> ${s.duration}</p>
+            <p><strong>Notes:</strong> ${s.notes || "-"}</p>
+          </div>
+          <div class="swap-actions"></div>
+        `;
+
+          const actionsDiv = card.querySelector(".swap-actions");
+
+          if (s.status === "pending") {
+            const acceptBtn = document.createElement("button");
+            acceptBtn.textContent = "Accept";
+            acceptBtn.onclick = () => {
+              s.status = "active";
+              saveSwaps();
+              alert(
+                "Swap accepted! You will now see this in your Active Swaps."
+              );
+            };
+
+            const rejectBtn = document.createElement("button");
+            rejectBtn.textContent = "Reject";
+            rejectBtn.classList.add("reject");
+            rejectBtn.onclick = () => {
+              s.status = "rejected";
+              saveSwaps();
+              alert("Swap rejected.");
+            };
+
+            const modifyBtn = document.createElement("button");
+            modifyBtn.textContent = "Modify";
+            modifyBtn.classList.add("modify");
+            modifyBtn.onclick = () => {
+              openModal(index);
+            };
+
+            actionsDiv.appendChild(acceptBtn);
+            actionsDiv.appendChild(rejectBtn);
+            actionsDiv.appendChild(modifyBtn);
+          } else if (s.status === "active") {
+            const completeBtn = document.createElement("button");
+            completeBtn.textContent = "Mark Complete";
+            completeBtn.onclick = () => {
+              s.status = "completed";
+              saveSwaps();
+              alert("Swap completed successfully!");
+            };
+            actionsDiv.appendChild(completeBtn);
+          }
+
+          swapsList.appendChild(card);
+        });
+        updateStats();
+      }
+
+      function saveSwaps() {
+        localStorage.setItem("userSwaps", JSON.stringify(swaps));
+        renderSwaps();
+      }
+
+      // Modal functionality
+      const modal = document.getElementById("modal");
+      const modalDuration = document.getElementById("modal-duration");
+      const modalNotes = document.getElementById("modal-notes");
+      let currentEditIndex = null;
+
+      function openModal(index) {
+        currentEditIndex = index;
+        const swap = swaps[index];
+        modalDuration.value = swap.duration;
+        modalNotes.value = swap.notes;
+        modal.style.display = "flex";
+      }
+
+      document.getElementById("modal-save").onclick = () => {
+        if (currentEditIndex !== null) {
+          swaps[currentEditIndex].duration = modalDuration.value;
+          swaps[currentEditIndex].notes = modalNotes.value;
+          saveSwaps();
+          modal.style.display = "none";
+          alert("Swap details modified and saved!");
+        }
+      };
+
+      window.onclick = (e) => {
+        if (e.target === modal) modal.style.display = "none";
+      };
+
+      // Initialize
+      renderSwaps();
+    </script>
+  </body>
+</html>
